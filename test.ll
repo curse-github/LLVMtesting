@@ -1,4 +1,24 @@
 ; https://llvm.org/docs/LangRef.html
+; function flags
+;     alwaysinline means the optimizer should attempt to inline the function in every opportunity possible
+;     cold means the function will rarely get called
+;     "dontcall-warn" means a compiler warning will get called if that function doesnt get optimized out and is then called
+;     hot means the opposite of cold, the function will be called very often and should be optimized heavily.
+;     inlinehint means inlining that function is "desirable" though not required
+;     jumptable means that the pointer to this function needs to be added to a jump table and any reference of it should instead point the the jump table
+;     memory
+;     nofree means that function will never (directly or indirectly) free memory of any kind
+;     noinline means that function must not be inlined
+;     nomerge prevents merging of code, this can improve stacktraces for debugging
+;     noprofile prevents the function from being profiled, and the function wont be inlined unless the callee also has the noprofile flag
+;     skipprofile is the same as above but does not restrict profiling
+;     noreturn indicated the function will never actually return, ie. will always cause an exception
+;     norecurse means the function has no possibility of recursing at all
+;     nosync means this function will not attempt to communicate with another thread an any point during its execution
+;     nounwind means the function will never raise an exception but may indirectly cause an "async" exception
+;         uwtable
+;     mustprogress means the function in required to return a value or end with an exception
+
 ;     dso_local means that that definition is either right there or within this file/(linkage unit?)
 ;     unnamed_addr means it is not expected to need a pointer to that variable or function in this scope
 
@@ -6,7 +26,7 @@ source_filename = "./fromcpp.cpp"
 target datalayout = "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-pc-windows-msvc19.37.32825"
 
-@Str = linkonce_odr local_unnamed_addr constant [22 x i8] c"output of operation: \00"
+@Str = linkonce_odr local_unnamed_addr constant [36 x i8] c"output of S*(T+U*(V*W)))/(X*(Y+Z): \00"
 @StrP = linkonce_odr local_unnamed_addr global ptr @Str
 @S = dso_local local_unnamed_addr global float 150.0
 @T = dso_local local_unnamed_addr global float 1.0
@@ -16,8 +36,8 @@ target triple = "x86_64-pc-windows-msvc19.37.32825"
 @X = dso_local local_unnamed_addr global float 30.0
 @Y = dso_local local_unnamed_addr global float 2.0
 @Z = dso_local local_unnamed_addr global float 2.0
-define dso_local i32 @main() local_unnamed_addr #0 {
-    ; return (S*(T+U*(V*W))) / (X*(Y+Z))
+define dso_local i32 @main() local_unnamed_addr #0 #1 {
+    ; return (S*(T+U*(V*W)))/(X*(Y+Z))
     ; return S T U V W**+*X Y Z+*/
     ;   v1 = V*W
     ; return S T U v1*+*X Y Z+*/
@@ -61,19 +81,21 @@ define dso_local i32 @main() local_unnamed_addr #0 {
     %lStr = load ptr, ptr @StrP
     tail call void @printStr(ptr noundef %lStr)
     tail call void @printLnFloat(float noundef %15)
-    ret i32 0
+    %16 = fptosi float %15 to i32
+    ret i32 %16
 }
 
-declare dso_local void @"?print@@YAXD@Z"(i8 noundef) local_unnamed_addr #1
-declare dso_local void @"?print@@YAXPEAD@Z"(ptr noundef) local_unnamed_addr #1
-declare dso_local void @"?print@@YAXI@Z"(i32 noundef) local_unnamed_addr #1
-declare dso_local void @"?print@@YAXH@Z"(i32 noundef) local_unnamed_addr #1; signed int
-declare dso_local void @"?print@@YAXM@Z"(float noundef) local_unnamed_addr #1
-declare dso_local void @"?println@@YAXD@Z"(i8 noundef) local_unnamed_addr #1
-declare dso_local void @"?println@@YAXPEAD@Z"(ptr noundef) local_unnamed_addr #1
-declare dso_local void @"?println@@YAXI@Z"(i32 noundef) local_unnamed_addr #1
-declare dso_local void @"?println@@YAXH@Z"(i32 noundef) local_unnamed_addr #1; signed int
-declare dso_local void @"?println@@YAXM@Z"(float noundef) local_unnamed_addr #1
+; importing these from another file and wrapping them
+declare dso_local void @"?print@@YAXD@Z"(i8 noundef) local_unnamed_addr #0
+declare dso_local void @"?print@@YAXPEAD@Z"(ptr noundef) local_unnamed_addr #0
+declare dso_local void @"?print@@YAXI@Z"(i32 noundef) local_unnamed_addr #0
+declare dso_local void @"?print@@YAXH@Z"(i32 noundef) local_unnamed_addr #0; signed int
+declare dso_local void @"?print@@YAXM@Z"(float noundef) local_unnamed_addr #0
+declare dso_local void @"?println@@YAXD@Z"(i8 noundef) local_unnamed_addr #0
+declare dso_local void @"?println@@YAXPEAD@Z"(ptr noundef) local_unnamed_addr #0
+declare dso_local void @"?println@@YAXI@Z"(i32 noundef) local_unnamed_addr #0
+declare dso_local void @"?println@@YAXH@Z"(i32 noundef) local_unnamed_addr #0; signed int
+declare dso_local void @"?println@@YAXM@Z"(float noundef) local_unnamed_addr #0
 
 define dso_local void @printChar(i8 noundef %in0) local_unnamed_addr #0 {
     tail call void @"?print@@YAXD@Z"(i8 noundef %in0)
@@ -118,5 +140,5 @@ define dso_local void @printLnFloat(float noundef %in0) local_unnamed_addr #0 {
 
 
 
-attributes #0 = { mustprogress nofree norecurse nosync nounwind willreturn memory(read, argmem: none, inaccessiblemem: none) uwtable "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #1 = { "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #0 = { nounwind mustprogress norecurse nosync "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #1 = {  }

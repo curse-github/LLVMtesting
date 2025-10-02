@@ -56,6 +56,7 @@ define dso_local void @printLnFloat(float noundef %in0) local_unnamed_addr #0 {
     tail call void @_Z7printlnf(float noundef %in0)
     ret void
 }
+
 define dso_local i32 @strToInt(ptr noundef %in0) local_unnamed_addr #0 {
     %out = tail call i32 @_Z8strToIntPKc(ptr noundef %in0)
     ret i32 %out

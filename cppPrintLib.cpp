@@ -1,32 +1,32 @@
 #include <iostream>
-__declspec(noinline) void print(char ch) {
+void print(char ch) {
     std::cout << ch;
 }
-__declspec(noinline) void print(char* str) {
+void print(char* str) {
     std::cout << str;
 }
-__declspec(noinline) void print(unsigned int i) {
+void print(unsigned int i) {
     std::cout << i;
 }
-__declspec(noinline) void print(int i) {
+void print(int i) {
     std::cout << i;
 }
-__declspec(noinline) void print(float f) {
+void print(float f) {
     std::cout << f;
 }
-__declspec(noinline) void println(char ch) {
+void println(char ch) {
     std::cout << ch << '\n';
 }
-__declspec(noinline) void println(char* str) {
+void println(char* str) {
     std::cout << str << '\n';
 }
-__declspec(noinline) void println(unsigned int i) {
+void println(unsigned int i) {
     std::cout << i << '\n';
 }
-__declspec(noinline) void println(int i) {
+void println(int i) {
     std::cout << i << '\n';
 }
-__declspec(noinline) void println(float f) {
+void println(float f) {
     std::cout << f << '\n';
 }
 /*

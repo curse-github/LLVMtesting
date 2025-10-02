@@ -1,77 +1,137 @@
-; https://llvm.org/docs/LangRef.html
-; function flags
-;     alwaysinline means the optimizer should attempt to inline the function in every opportunity possible
-;     cold means the function will rarely get called
-;     "dontcall-warn" means a compiler warning will get called if that function doesnt get optimized out and is then called
-;     hot means the opposite of cold, the function will be called very often and should be optimized heavily.
-;     inlinehint means inlining that function is "desirable" though not required
-;     jumptable means that the pointer to this function needs to be added to a jump table and any reference of it should instead point the the jump table
-;     memory
-;     nofree means that function will never (directly or indirectly) free memory of any kind
-;     noinline means that function must not be inlined
-;     nomerge prevents merging of code, this can improve stacktraces for debugging
-;     noprofile prevents the function from being profiled, and the function wont be inlined unless the callee also has the noprofile flag
-;     skipprofile is the same as above but does not restrict profiling
-;     noreturn indicated the function will never actually return, ie. will always cause an exception
-;     norecurse means the function has no possibility of recursing at all
-;     nosync means this function will not attempt to communicate with another thread an any point during its execution
-;     nounwind means the function will never raise an exception but may indirectly cause an "async" exception
-;     strictfp function requires struct floating point math
-;     uwtable requires unwind table
-;     mustprogress means the function in required to return a value or end with an exception
-; declare flags
-;     unnamed_addr/local_unnamed_addr means it is not expected to need a pointer to that variable or function in this scope
-;         may be merged with other variables if constant
-;     dso_local means that the symbol will resolve within this file/(linkage unit?)
-;     global, represents global variables, which are allocated at compile time
-;         this is in comparison to local variables which get allocated at run-time on the stack
-;     constant, obviously, means the value is completely constant and will never be changed
-; types
-;     ptr ; this simply refers to literally any pointer, its just a memory location to arbitrary data
-;         constants:
-;             ptr @<name> ; will create a pointer to the variable of name <name> to initialize a variable with
-;     integers:
-;         i8
-;         i32
-;         i64
-;         iN ; this can technically take a value of N from anywhere between 1 to 2^23
-;     floating point types:
-;         half
-;         float
-;         double
-;         fp128
-;     function types:
-;         void (<t>) ; function returning void taking a single value of type <t> as an argument
-;         <t1> (<t2>, <t3>) ; function returning <t1> taking a single value of type <t2> and <t3> each as arguments
-;         void (<t>, ...) ; function returning void and taking any number of <t> type aguments
-;         {<t1>, <t2>} (<t3>) ; function returning a struct of <t1> and <t2>, taking in a single value of type <t3> as an argument
-;     array type:
-;         [N x <t>]             ; creates a N element array of <t> type variables
-;         [N x [M x <t>]]       ; creates a N by M 2d array of <t> type variables
-;         [N x [M x [P x <t>]]] ; creates a N by M by P 3d array of <t> type variables
-;         ... ; can continue
-;         constants:
-;             [ i16 42, i16 11, i16 20, i16 4 ] is a constant of type [4 x i16] with values 32, 11, 20, and 4
-;             c"blah blah blah\00" is a constant of type [15 x i8] with its value being the string "blah blah blah\00"
-;     vector type:
-;         <N x <t>> ; creates a vector containing N values of type <t>
-;             note: this is different from an array only in the case that size(<t>) is not an integer multiple of bytes, ie. <2 x i4>
-;         constants:
-;             < i10 42, i10 11, i10 20, i10 4 > is a constant of type <4 x i10> with values 32, 11, 20, and 4
-;     struct types:
-;         %T<N> = type { <t1>, <t2>, ... }   ; defines a struct with types <t1>, <t2> etc. held within
-;         %T<N> = type <{ <t1>, <t2>, ... }> ; defines a **packed** struct with types <t1>, <t2> etc. held within
-;     note: every type defined above can be initialized with term "zeroinitializer" to simply fill it with 0s
-;     label type:
-;         <name> = 5 ; creates a label with the name <name> with the location of 5 (dword)s after wherever that label is used
-;         <name>: ; creates a label with the name <name> at the location of the line directly after the label
-;         <name> = . + 5 ; creates a label with the name <name> at the location of 5 (dword)s after the line directly after the label
-;         <name> = <other_label> + 5 ; creates a label with the name <name> at the location of 5 (dword)s after the value of <other_label>
+https://llvm.org/docs/LangRef.html
+function flags
+    alwaysinline means the optimizer should attempt to inline the function in every opportunity possible
+    cold means the function will rarely get called
+    "dontcall-warn" means a compiler warning will get called if that function doesnt get optimized out and is then called
+    hot means the opposite of cold, the function will be called very often and should be optimized heavily.
+    inlinehint means inlining that function is "desirable" though not required
+    jumptable means that the pointer to this function needs to be added to a jump table and any reference of it should instead point the the jump table
+    memory
+    nofree means that function will never (directly or indirectly) free memory of any kind
+    noinline means that function must not be inlined
+    nomerge prevents merging of code, this can improve stacktraces for debugging
+    noprofile prevents the function from being profiled, and the function wont be inlined unless the callee also has the noprofile flag
+    skipprofile is the same as above but does not restrict profiling
+    noreturn indicated the function will never actually return, ie. will always cause an exception
+    norecurse means the function has no possibility of recursing at all
+    nosync means this function will not attempt to communicate with another thread an any point during its execution
+    nounwind means the function will never raise an exception but may indirectly cause an "async" exception
+    strictfp function requires struct floating point math
+    uwtable requires unwind table
+    mustprogress means the function in required to return a value or end with an exception
+declare flags
+    unnamed_addr/local_unnamed_addr means it is not expected to need a pointer to that variable or function in this scope
+        may be merged with other variables if constant
+    dso_local means that the symbol will resolve within this file/(linkage unit?)
+    global, represents global variables, which are allocated at compile time
+        this is in comparison to local variables which get allocated at run-time on the stack
+    constant, obviously, means the value is completely constant and will never be changed
+types
+    ptr this simply refers to literally any pointer, its just a memory location to arbitrary data
+        constants:
+            ptr @<name> will create a pointer to the variable of name <name> to initialize a variable with
+    integers:
+        i8
+        i32
+        i64
+        iN this can technically take a value of N from anywhere between 1 to 2^23
+    floating point types:
+        half
+        float
+        double
+        fp128
+    function types:
+        void (<t>) function returning void taking a single value of type <t> as an argument
+        <t1> (<t2>, <t3>) function returning <t1> taking a single value of type <t2> and <t3> each as arguments
+        void (<t>, ...) function returning void and taking any number of <t> type aguments
+        {<t1>, <t2>} (<t3>) function returning a struct of <t1> and <t2>, taking in a single value of type <t3> as an argument
+    array type:
+        [N x <t>]             creates a N element array of <t> type variables
+        [N x [M x <t>]]       creates a N by M 2d array of <t> type variables
+        [N x [M x [P x <t>]]] creates a N by M by P 3d array of <t> type variables
+        ... can continue
+        constants:
+            [ i16 42, i16 11, i16 20, i16 4 ] is a constant of type [4 x i16] with values 32, 11, 20, and 4
+            c"blah blah blah\00" is a constant of type [15 x i8] with its value being the string "blah blah blah\00"
+    vector type:
+        <N x <t>> creates a vector containing N values of type <t>
+            note: this is different from an array only in the case that size(<t>) is not an integer multiple of bytes, ie. <2 x i4>
+        constants:
+            < i10 42, i10 11, i10 20, i10 4 > is a constant of type <4 x i10> with values 32, 11, 20, and 4
+    struct types:
+        %T<N> = type { <t1>, <t2>, ... }   defines a struct with types <t1>, <t2> etc. held within
+        %T<N> = type <{ <t1>, <t2>, ... }> defines a **packed** struct with types <t1>, <t2> etc. held within
+    note: every type defined above can be initialized with term "zeroinitializer" to simply fill it with 0s
+    label type:
+        <name> = 5 creates a label with the name <name> with the location of 5 (dword)s after wherever that label is used
+        <name>: creates a label with the name <name> at the location of the line directly after the label
+        <name> = . + 5 creates a label with the name <name> at the location of 5 (dword)s after the line directly after the label
+        <name> = <other_label> + 5 creates a label with the name <name> at the location of 5 (dword)s after the value of <other_label>
 
-; '@<name> = global/constant <t> <value>' defines a global variable of type <t> with value <value>
-; '%<name>' defined local, immutable variables
-; 'define <t> @<name>() {}' defines a function in this scope returning type <t>
-; 'declare <t> @<name>()' defined a external function, declared in another scope
-; '@<name> = alias <t>, <t>* <alisee_name> defines an alias of the variable <alisee_name> of type <t> with the new name <name>
+'@<name> = global/constant <t> <value>' defines a global variable of type <t> with value <value>
+'%<name>' defined local, immutable variables
+'define <t> @<name>() {}' defines a function in this scope returning type <t>
+'declare <t> @<name>()' defined a external function, declared in another scope
+'@<name> = alias <t>, <t>* <alisee_name> defines an alias of the variable <alisee_name> of type <t> with the new name <name>
 
-; for instructons, see https://llvm.org/docs/LangRef.html#instruction-reference
+for instructons, see https://llvm.org/docs/LangRef.html#instruction-reference
+
+instruction types:
+    local variable:
+        alloca <type>
+            yields a pointer to a variable on the stack
+    comparisons:
+        icmp <cond> <type> <value1>, <value2>
+            <cond> can be one of 10
+                eq  : equal
+                ne  : not equal
+                ugt : unsigned greater than
+                uge : unsigned greater than or equal
+                ult : unsigned less than
+                ule : unsigned less than or equal
+                sgt : signed greater than
+                sge : signed greater than or equal
+                slt : signed less than
+                sle : signed less than or equal
+            <type> can be one of many
+                i1
+                i8
+                i16
+                i32
+                i64
+                iN where N is any integer representing the number of bits
+            <value1> and <value2> can each be one of 3 things
+                type constants
+                local variables
+                global variables
+        fcmp <cond> <type> <value1>, <value2>
+            <cond> can be one of 10
+                oeq : "ordered" equal
+                one : "ordered" not equal
+                ogt : "ordered" greater than
+                oge : "ordered" greater than or equal
+                olt : "ordered" less than
+                ole : "ordered" less than or equal
+            <type> can be one of 4
+                half
+                float
+                double
+                f128
+            <value1> and <value2> can each be one of 3 things
+                type constants
+                local variables
+                global variables
+    branch condition
+        br <type> <value>, label <ifTrue>, label <ifFalse>
+            <type> will 99.9% of the time be "i1"
+            <value> will 99.9% of the time be a value calculated with icmp or fcmp
+            the <ifTrue> label and <ifFalse> label are straight forward
+        br label <label>
+            just branches to that label unconditionally
+    function calls
+        tail call <retType> @<functionName>(<argumentType> <argumentValue>)
+            tail call void @print(i32 15)
+            tail call void @printLn(double %f)
+    load and store
+        load <type>, ptr <valuePointer>
+        store <type> <value>, ptr <valuePointer>

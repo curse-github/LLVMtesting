@@ -2,7 +2,7 @@
 void print(char ch) {
     std::cout << ch;
 }
-void print(char* str) {
+void print(const char* str) {
     std::cout << str;
 }
 void print(unsigned int i) {
@@ -17,7 +17,7 @@ void print(float f) {
 void println(char ch) {
     std::cout << ch << '\n';
 }
-void println(char* str) {
+void println(const char* str) {
     std::cout << str << '\n';
 }
 void println(unsigned int i) {
@@ -29,12 +29,15 @@ void println(int i) {
 void println(float f) {
     std::cout << f << '\n';
 }
+int strToInt(const char* str) {
+    return std::stoi(str);
+}
+unsigned int strToUInt(const char* str) {
+    return std::stoi(str);
+}
 /*
-char* str = "THIS IS A TEST STRING, and a test number: ";
-unsigned int test = 169;
 int main() {
-    print(str);
-    println(test);
-    println(1+test);
+    strToUInt("0");
+    return 0;
 }
 //*/

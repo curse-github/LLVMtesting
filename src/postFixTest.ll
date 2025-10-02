@@ -68,5 +68,7 @@ declare dso_local void @printLnStr(ptr noundef %in0) local_unnamed_addr #0
 declare dso_local void @printLnUInt(i32 noundef %in0) local_unnamed_addr #0
 declare dso_local void @printLnInt(i32 noundef %in0) local_unnamed_addr #0
 declare dso_local void @printLnFloat(float noundef %in0) local_unnamed_addr #0
+declare dso_local i32 @strToInt(ptr noundef %in0) local_unnamed_addr #0
+declare dso_local i32 @strToUInt(ptr noundef %in0) local_unnamed_addr #0
 
 attributes #0 = { norecurse nosync nounwind mustprogress "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cmov,+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }

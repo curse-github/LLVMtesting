@@ -1,7 +1,5 @@
 target datalayout = "e-m:w-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128"
-
-; target triple = "x86_64-pc-windows-msvc19.37.32825"
-target triple = "x86_64-pc-linux-gnu"
+; target triple = "x86_64-pc-linux-gnu"
 
 @Str = linkonce_odr local_unnamed_addr constant [36 x i8] c"output of S*(T+U*(V*W)))/(X*(Y+Z): \00"
 @StrP = linkonce_odr local_unnamed_addr global ptr @Str

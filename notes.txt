@@ -121,6 +121,17 @@ instruction types:
                 type constants
                 local variables
                 global variables
+    conversions:
+        unsigned iN -> unsigned iM   : trunc <iN> <var> to <iM> where N > M
+        unsigned iN -> unsigned iM   : zext <iN> <var> to <iM> where N < M
+          signed iN ->   signed iM   : sext <iN> <var> to <iM> where N < M
+        float type 1 -> float type 2 : fptrunc <float ty1> <var> to <float ty2> where sizeof(float ty1) > sizeof(float ty2)
+        float type 1 -> float type 2 : fpext <float ty1> <var> to <float ty2>   where sizeof(float ty1) < sizeof(float ty2)
+        unsigned iN -> float type    : uitofp <float ty> <var> to <iN>
+          signed iN -> float type    : sitofp <float ty> <var> to <iN>
+        float type -> unsigned iN    : fptoui <iN> <var> to <float ty>
+        float type ->   signed iN    : fptosi <iN> <var> to <float ty>
+        <ty1> -> <ty2>               : bitcast <ty1> <var> to <ty2>
     branch condition
         br <type> <value>, label <ifTrue>, label <ifFalse>
             <type> will 99.9% of the time be "i1"

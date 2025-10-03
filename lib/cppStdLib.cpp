@@ -9,12 +9,16 @@ void print(const char* str) {
 void print(unsigned int i) {
     std::cout << i;
 }
+void print(unsigned long long i) {
+    std::cout << i;
+}
 void print(int i) {
     std::cout << i;
 }
 void print(float f) {
     std::cout << f;
 }
+
 void println(char ch) {
     std::cout << ch << '\n';
 }
@@ -24,12 +28,19 @@ void println(const char* str) {
 void println(unsigned int i) {
     std::cout << i << '\n';
 }
+void println(unsigned long long i) {
+    std::cout << i << '\n';
+}
 void println(int i) {
     std::cout << i << '\n';
 }
 void println(float f) {
     std::cout << f << '\n';
 }
+void println() {
+    std::cout << '\n';
+}
+
 int strToInt(const char* str) {
     return std::stoi(str);
 }

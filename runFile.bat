@@ -11,4 +11,3 @@ clang++ ./out/%1.ll -c -o ./out/%1.obj
 clang++ ./out/cppStdLib.obj ./out/stdLib.obj ./out/%1.obj -o ./out/%1.exe
 out\%1.exe %2 %3 %4 %5 %6 %7 %8 %9
 echo %1 exited with code %ERRORLEVEL%
-pause
